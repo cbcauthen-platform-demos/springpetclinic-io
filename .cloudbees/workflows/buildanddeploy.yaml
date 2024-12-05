@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 env:
   APP_NAME: spring-petclinic
-  NAMESPACE: bcauthen #This is SE's personal namespace
+  NAMESPACE: bcauthen #This is the SE's personal namespace
 jobs:
   evidence-collection:
     outputs:
