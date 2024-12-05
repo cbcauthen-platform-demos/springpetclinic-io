@@ -5,10 +5,12 @@ on:
   push:
     branches:
       - "**"
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 env:
   APP_NAME: spring-petclinic
-  NAMESPACE: bcauthen #This is the SE's personal namespace
+  NAMESPACE: bcauthen
 jobs:
   evidence-collection:
     outputs:
@@ -96,14 +98,6 @@ jobs:
           destination: ${{ secrets.DOCKERHUB_STAGE_USERNAME }}/spring-petclinic:${{ cloudbees.scm.sha }},${{ secrets.DOCKERHUB_STAGE_USERNAME }}/springpet-clinic:latest
           tar-path: container-image.tar
           build-args: BUILDKIT_CONTEXT_KEEP_GIT_DIR=1,BUILDKIT_INLINE_CACHE=1
-      # - uses: calculi-corp/assets-plugin-chain-utils/upload-binary@v1
-      #   name: Upload binary from container build
-      #   continue-on-error: true
-      #   id: upload-binary
-      #   with:
-      #     file-path: container-image.tar
-      #     file-type: BINARY_CONTAINER
-      #     debug: "true"
     needs:
       - static-analysis
       - sca-scan
@@ -197,10 +191,9 @@ jobs:
       - name: Publish evidence
         uses: cloudbees-io/publish-evidence-item@v1
         with:
-          content: |-
-            ${{vars.PETCLINIC_SCA_SCAN_RESULTS}} 
-          format: MARKDOWN                  
-    needs: 
+          content: "${{vars.PETCLINIC_SCA_SCAN_RESULTS}} "
+          format: MARKDOWN
+    needs:
       - evidence-collection
   exit_gate:
     environment: bcauthen_DEV
@@ -216,7 +209,7 @@ jobs:
         name: Manual Approval
         run: |
           echo "Manual approval required before proceeding to deployment."
-    needs: 
+    needs:
       - deploy_dev
   smokeTest_dev:
     steps:
@@ -231,10 +224,10 @@ jobs:
         with:
           content: "${{vars.PETCLINIC_SMOKETEST_DEV_RESULTS}} "
           format: MARKDOWN
-    needs: 
+    needs:
       - deploy_dev
   deploy_dev:
-    environment: bcauthen_DEV #This will be changed to SE's created DEV environment ex: tjohns_DEV
+    environment: bcauthen_DEV
     steps:
       - name: Checkout
         uses: cloudbees-io/checkout@v1
@@ -267,7 +260,7 @@ jobs:
     needs:
       - container-scan
   deploy_qa:
-    environment: bcauthen_QA #This will be changed to SE's created QA environment ex: tjohns_QA
+    environment: bcauthen_QA
     steps:
       - name: Checkout
         uses: cloudbees-io/checkout@v1
@@ -297,7 +290,7 @@ jobs:
 
             Running spring-petclinic:${{ cloudbees.scm.sha }}
           format: MARKDOWN
-    needs: 
+    needs:
       - exit_gate
   smokeTest_qa:
     steps:
@@ -312,10 +305,10 @@ jobs:
         with:
           content: "${{vars.PETCLINIC_SMOKETEST_QA_RESULTS}} "
           format: MARKDOWN
-    needs: 
+    needs:
       - deploy_qa
   deploy_prod:
-    environment: bcauthen_PROD #This will be changed to SE's created PROD environment ex: tjohns_PROD
+    environment: bcauthen_PROD
     steps:
       - name: Checkout
         uses: cloudbees-io/checkout@v1
@@ -345,7 +338,7 @@ jobs:
 
             Running spring-petclinic:${{ cloudbees.scm.sha }}
           format: MARKDOWN
-    needs: 
+    needs:
       - deploy_qa
   smokeTest_prod:
     steps:
@@ -360,5 +353,5 @@ jobs:
         with:
           content: "${{vars.PETCLINIC_SMOKETEST_PROD_RESULTS}} "
           format: MARKDOWN
-    needs: 
+    needs:
       - deploy_prod
