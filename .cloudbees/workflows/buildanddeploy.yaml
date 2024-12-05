@@ -53,6 +53,8 @@ jobs:
     outputs:
       unitTestResults: ${{ steps.RunUnitTest.outputs.mvn_test_stdio1 }}
     steps:
+      - name: Checkout
+        uses: cloudbees-io/checkout@v1
       - name: RunUnitTest
         id: RunUnitTest
         uses: docker://maven:3-eclipse-temurin-17
@@ -114,6 +116,8 @@ jobs:
       MAJOR_COUNT: ${{ steps.FetchSonarQubeIssues.outputs.MAJOR_COUNT }}
       MINOR_COUNT: ${{ steps.FetchSonarQubeIssues.outputs.MINOR_COUNT }}
     steps:
+      - name: Checkout
+        uses: cloudbees-io/checkout@v1
       - name: Scan with Find Security Bugs
         uses: cloudbees-io/findsecbugs-sast-scan-code@v1
         with:
@@ -168,6 +172,8 @@ jobs:
     needs: package
   sast-scan:
     steps:
+      - name: Checkout
+        uses: cloudbees-io/checkout@v1
       - uses: cloudbees-io/snyk-sast-scan-code@v1
         name: Scan with Snyk SAST
         kind: scan
@@ -179,6 +185,8 @@ jobs:
       - evidence-collection
   sca-scan:
     steps:
+      - name: Checkout
+        uses: cloudbees-io/checkout@v1
       - uses: cloudbees-io/snyk-sca-scan-dependency@v1
         name: Scan with Snyk SCA
         kind: scan
