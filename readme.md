@@ -1,4 +1,4 @@
-![CloudBees Feature Management](https://1ko9923xosh2dsbjsxpwqp45-wpengine.netdna-ssl.com/wp-content/themes/rollout/images/rollout_white_logo1.png)
+# CloudBees Feature Management
 
 [![Integration status](https://app.rollout.io/badges/6711f17bfdb374b67bc66e22)](https://app.rollout.io/app/66fe9bb334863653de479a9b/settings/info)
 
