@@ -5,7 +5,9 @@ on:
   push:
     branches:
       - "**"
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 env:
   APP_NAME: spring-petclinic
   NAMESPACE: bcauthen
